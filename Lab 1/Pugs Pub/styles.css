@@ -1,0 +1,106 @@
+
+body.home{
+    background-image: url(./images/background.png);
+}
+
+body {
+    background-image: url(./images/background2.png);
+    .header1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navigationbar{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-break: auto;
+
+    }
+
+}
+
+body_2 {
+    .header1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .navigationbar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-break: auto;
+
+    }
+
+    .Appetizers{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 30px;
+        table-layout: auto;
+        margin-bottom: 20px;
+
+    }
+    .Appetizers td{
+        text-align: left;
+        font-weight: bold;
+        font-size: 40px;
+    }
+    .Appetizers td:hover{
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .Entrees{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 30px;
+        table-layout: auto;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .Entrees td{
+        text-align: left;
+        font-weight: bold;
+        font-size: 40px;
+    }
+    .Entrees td:hover{
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+
+}
+ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: saddlebrown;
+}
+ul li{
+    float: left;
+    border-left: azure 1px solid;
+    border-right: azure 1px solid;
+    border-bottom: azure 1px solid;
+    border-top: azure 1px solid;
+    font-size: 30px;
+}
+ul li a{
+    display: flow;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    padding: 20px 40px;
+}
+ul li a:hover{
+    background-color: peru;
+}
+
