@@ -35,10 +35,13 @@
                         <a class="nav-link active" aria-current="page" href="index.html"><i class="fa-regular fa-house"></i>Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="menu.html"><i class="fa-solid fa-book-open"></i>Menu</a>
+                        <a class="nav-link" href="menu.html"><i class="fa-solid fa-book-open"></i>Menu / Order-To-Go</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="reservations.html"><i class="fa-regular fa-calendar-check"></i>Reservations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html"><i class="fa-solid fa-cart-shopping"></i>Cart</a>
                     </li>
                 </ul>
             </div>
@@ -76,6 +79,31 @@
                 <h2 class="text-center mb-5 category-header display-5">
                     Pugs Pub Menu – Issued 1887, Pawprint Approved
                 </h2>
+
+                <div class="mb-4 text-center">
+                    <div class="btn-group flex-wrap justify-content-center gap-2" role="group" aria-label="Menu category filter">
+                        <button type="button" class="btn btn-secondary category-btn active"
+                                data-category="All">
+                            All
+                        </button>
+                        <button type="button" class="btn btn-secondary category-btn"
+                                data-category="Starters">
+                            Starters
+                        </button>
+                        <button type="button" class="btn btn-secondary category-btn"
+                                data-category="Entrees">
+                            Entrees
+                        </button>
+                        <button type="button" class="btn btn-secondary category-btn"
+                                data-category="Sides">
+                            Sides
+                        </button>
+                        <button type="button" class="btn btn-secondary category-btn"
+                                data-category="Drinks">
+                            Drinks
+                        </button>
+                    </div>
+                </div>
 
                 <div id="menuContainer"></div>
             </section>

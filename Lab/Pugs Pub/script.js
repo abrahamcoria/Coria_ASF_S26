@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const header = document.createElement('h3');
         header.className = 'mb-4';
-        header.style.cssText = 'color: #b8860b; border-bottom: 2px solid #b8860b; padding-bottom: 0.5rem;';
+        header.style.cssText = 'color: #d4a017; border-bottom: 2px solid #b8860b; padding-bottom: 0.5rem;';
         header.textContent = group.name;
         container.appendChild(header);
 
@@ -70,16 +70,57 @@ document.addEventListener('DOMContentLoaded', function() {
             <h5 class="card-title">${item.name}</h5>
             <p class="card-text">${item.description}</p>
             <p class="price">${money.format(item.price)}</p>
+            <button class="btn btn-warning add-to-cart-btn"
+            data-id="${item.id}"
+            data-name="${item.name}"
+            data-price="${item.price}"
+            data-image="${imgSrc}">
+            Add to Cart
+            </button>
         </div>
     `;
 
+
             col.appendChild(card);
             row.appendChild(col);
+
+
+//END of CART
         });
     });
+    //START of adding menu items CART
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function saveCart() {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('add-to-cart-btn')) {
+            const btn = e.target;
+            const id = parseInt(btn.dataset.id);
+            const name = btn.dataset.name;
+            const price = parseFloat(btn.dataset.price);
+
+            const card = btn.closest('.card');
+            const img = card?.querySelector('img.card-img-top');
+            const imageSrc = img?.src || `./images/placeholder.jpg`;
+
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id, name, price, quantity: 1, image: imageSrc });
+            }
+
+            saveCart();
+            alert(`${name} added to cart!`);
+        }
+    });
+//This is the END of adding items to Menu
 });
 
-//This is the END for my Menu
+
 
 //This is the START for my Reservation Page
 document.addEventListener('DOMContentLoaded', function () {
@@ -185,3 +226,190 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 //This is the END for my Reservation Page
+
+//This is the START of my CART / CHECKOUT
+document.addEventListener('DOMContentLoaded', function() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartContainer = document.getElementById('cart-items');
+    const countEl = document.getElementById('cart-items-count');
+
+
+    function renderCart() {
+        cartContainer.innerHTML = ''; // clear previous content
+        let subtotal = 0;
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = '<p class="text-center my-5">Your cart is empty. Go order some brass-bound bites!</p>';
+            countEl.textContent = '0 items';
+            updateSummary(0);
+            return;
+        }
+
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+
+            const row = document.createElement('div');
+            row.className = 'row mb-4 d-flex justify-content-between align-items-center';
+            row.dataset.index = index;
+
+            row.innerHTML = `
+                <div class="col-md-2 col-lg-2 col-xl-2">
+                    <img src="${item.image || './images/placeholder.jpg'}" 
+                         class="img-fluid rounded-3" 
+                         alt="${item.name}"
+                         onerror="this.src='./images/placeholder.jpg'; this.alt='Image not available';">
+                </div>
+                <div class="col-md-3 col-lg-3 col-xl-3">
+                    <h6 class="text-muted">Menu Item</h6>
+                    <h6 class="mb-0">${item.name}</h6>
+                </div>
+                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                    <button class="btn btn-link px-2 decrement" data-index="${index}">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <input type="number" min="1" value="${item.quantity}" 
+                           class="form-control form-control-sm text-center quantity" 
+                           data-index="${index}" style="max-width: 70px;">
+                    <button class="btn btn-link px-2 increment" data-index="${index}">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1 text-end">
+                    <h6 class="mb-0">${money.format(itemTotal)}</h6>
+                </div>
+                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                    <a href="#!" class="text-danger remove-item fs-4" 
+                       data-index="${index}" title="Remove item">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            `;
+
+            cartContainer.appendChild(row);
+        });
+
+        countEl.textContent = `${cart.length} item${cart.length !== 1 ? 's' : ''}`;
+        updateSummary(subtotal);
+    }
+
+
+    function updateSummary(subtotal) {
+        const taxRate = 0.09;
+        const taxAmount = subtotal * taxRate;
+        const total = subtotal + taxAmount;
+
+        document.getElementById('subtotal').textContent = money.format(subtotal);
+        document.getElementById('tax').textContent = money.format(taxAmount);
+        document.getElementById('total').textContent = money.format(total);
+    }
+
+
+    cartContainer.addEventListener('click', function(e) {
+        const target = e.target.closest('button, a.remove-item');
+        if (!target) return;
+
+        const index = parseInt(target.dataset.index);
+        if (isNaN(index)) return;
+
+        if (target.classList.contains('increment')) {
+            cart[index].quantity += 1;
+        }
+        else if (target.classList.contains('decrement')) {
+            if (cart[index].quantity > 1) {
+                cart[index].quantity -= 1;
+            }
+        }
+        else if (target.classList.contains('remove-item') || target.closest('.remove-item')) {
+            if (confirm(`Remove "${cart[index].name}" from your cart?`)) {
+                cart.splice(index, 1);
+            } else {
+                return;
+            }
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart(); // re-render instead of reload (smoother)
+    });
+
+    // Quantity input direct edit
+    cartContainer.addEventListener('change', function(e) {
+        if (e.target.classList.contains('quantity')) {
+            const index = parseInt(e.target.dataset.index);
+            const newQty = parseInt(e.target.value);
+
+            if (newQty >= 1 && !isNaN(newQty)) {
+                cart[index].quantity = newQty;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart(); // re-render
+            } else {
+                e.target.value = cart[index].quantity; // revert invalid input
+            }
+        }
+    });
+
+    const clearBtn = document.getElementById('btn-clear-cart');
+    const checkoutBtn = document.getElementById('btn-checkout');
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear your entire cart? This cannot be undone.')) {
+                cart = [];
+                localStorage.removeItem('cart');
+                renderCart();
+                alert('Cart has been cleared.');
+            }
+        });
+    }
+    //This is the END of my CART / CHECKOUT
+
+
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            if (confirm('Are you sure you want to submit your order? No changes may be made after submitted.')) {
+                cart = [];
+                localStorage.removeItem('cart');
+                renderCart();
+                alert("Order submitted! Thank you for dining at Sir Pugsley's Pug Pub 🐶🍺");
+            }
+        });
+    }
+
+    renderCart();
+});
+
+const categoryButtons = document.querySelectorAll('.category-btn');
+
+categoryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+
+        categoryButtons.forEach(btn => btn.classList.remove('active'));
+
+        button.classList.add('active');
+
+        const selectedCategory = button.dataset.category;
+
+        const allHeaders = document.querySelectorAll('#menuContainer h3');
+        const allRows    = document.querySelectorAll('#menuContainer .row.g-4.mb-5');
+
+        allHeaders.forEach((header, index) => {
+            const row = allRows[index];
+            if (!row) return;
+
+            if (selectedCategory === 'All') {
+                header.style.display = '';
+                row.style.display = '';
+            } else {
+
+                const isMatch = header.textContent.toLowerCase().includes(selectedCategory.toLowerCase());
+                header.style.display = isMatch ? '' : 'none';
+                row.style.display = isMatch ? '' : 'none';
+            }
+        });
+    });
+});
+
